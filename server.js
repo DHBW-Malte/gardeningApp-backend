@@ -49,7 +49,16 @@ app.post("/users", async (req, res) => {
 });
 
 // Start server
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, '0.0.0.0', async () => {
   console.log(`Server running on port ${port}`);
+
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT NOW()');
+    console.log('✅ Connected to the database. Server time:', result.rows[0].now);
+    client.release();
+  } catch (err) {
+    console.error('❌ Failed to connect to the database:', err.message);
+  }
 });
 
