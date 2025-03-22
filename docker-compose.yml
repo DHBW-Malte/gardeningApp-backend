@@ -13,6 +13,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build: .
@@ -38,8 +43,3 @@ volumes:
 networks:
   app-net:
 
-healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
