@@ -1,4 +1,4 @@
-name: Deploy Node.js Backend
+name: Deploy Node.js Backend with Compose
 
 on:
   push:
@@ -12,25 +12,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.20.6'  # Need to be changed to the used Node.js version
-
-      - name: Install dependencies
-        run: npm install
-
-      # - name: Run tests
-      #   run: npm test
-
-      - name: Build Docker image
-        run: docker build -t green-fingers-backend:latest .
-
-      - name: Stop and remove existing container
+      - name: Build and start containers with Docker Compose
         run: |
-          docker stop green-fingers-backend-container || true
-          docker rm green-fingers-backend-container || true
-
-      - name: Deploy new container
-        run: docker run -d --name green-fingers-backend-container -p 3000:3000 green-fingers-backend:latest # Port need to be adjusted
+          docker-compose down
+          docker-compose up -d --build
 
