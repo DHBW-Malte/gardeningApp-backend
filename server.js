@@ -1,7 +1,9 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { Pool } = require("pg");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const pool = require("./green-fingers/restApi/db.js"); // Import the database connection
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,21 +12,42 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json()); // Allows JSON requests
 
-// PostgreSQL Connection
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
+// IP Whitelist
+const ipWhitelist = ["127.0.0.1", "192.168.0.2",, "192.168.0.126"]; // Add allowed IPs here
+
+const authenticateIP = (req, res, next) => {
+  const clientIP = req.ip || req.connection.remoteAddress; // Get client IP
+  if (!ipWhitelist.includes(clientIP)) {
+    return res.status(403).json({ error: "Access denied. IP not allowed." });
+  }
+  next(); // Proceed to the next middleware/route
+};
+
+// JWT Authentication Middleware
+const authenticateJWT = (req, res, next) => {
+  const token = req.header("Authorization")?.split(" ")[1]; // Get token from header
+  if (!token) {
+    return res.status(401).json({ error: "Access denied. No token provided." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token
+    req.user = decoded; // Attach user data to the request object
+    next(); // Proceed to the next middleware/route
+  } catch (error) {
+    res.status(400).json({ error: "Invalid token." });
+  }
+};
+
+// Apply IP whitelisting middleware to all routes
+app.use(authenticateIP);
 
 // Routes
 app.get("/", (req, res) => {
   res.send("Welcome to the Backend API!");
 });
 
-// Example API endpoint to fetch data
+// Example API endpoint to fetch data (protected by JWT)
 app.get("/api/data", async (req, res) => {
   try {
     const query = "SELECT * FROM your_table"; // Replace with your table name
@@ -36,7 +59,7 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
-// Login
+// Login (no JWT required)
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -250,4 +273,3 @@ app.listen(port, '0.0.0.0', async () => {
     console.error('❌ Failed to connect to the database:', err.message);
   }
 });
-
