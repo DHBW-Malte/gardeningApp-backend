@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const pool = require("./green-fingers/restApi/db.js"); // Import the database connection
+const pool = require("./restApi/db.js"); // Import the database connection
 
 const app = express();
 const port = process.env.PORT || 3000;
