@@ -11,7 +11,8 @@ router.post("/setup", async (req, res) => {
         email TEXT NOT NULL UNIQUE, 
         pwd_reset_token TEXT, 
         active BOOLEAN DEFAULT FALSE, 
-        token_expiring_date TIMESTAMPTZ
+        token_expiring_date TIMESTAMPTZ,
+        salt TEXT
       );
 
       CREATE TABLE IF NOT EXISTS catalog_plant (
