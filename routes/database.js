@@ -5,7 +5,7 @@ const router = express.Router();
 router.get("/setup", async (req, res) => {
   try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS user (
+      CREATE TABLE IF NOT EXISTS "user" (
         id SERIAL PRIMARY KEY, 
         username TEXT NOT NULL UNIQUE, 
         email TEXT NOT NULL UNIQUE, 
