@@ -5,8 +5,11 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const pool = require("./restApi/db.js"); // Import the database connection
 
+
 const app = express();
 const port = process.env.PORT || 3000;
+
+const databaseRoutes = require("./routes/database");
 
 // Middleware
 app.use(cors());
@@ -43,6 +46,9 @@ const authenticateJWT = (req, res, next) => {
 app.use(authenticateIP);
 
 // Routes
+app.use("/api/database/", databaseRoutes);
+
+
 app.get("/", (req, res) => {
   res.send("Welcome to the Backend API!");
 });
