@@ -42,7 +42,7 @@ router.get("/setup", async (req, res) => {
         id SERIAL PRIMARY KEY,
         user_id INTEGER,
         name TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE
       );
 
       CREATE TABLE IF NOT EXISTS user_plant (
@@ -55,7 +55,7 @@ router.get("/setup", async (req, res) => {
         date_watered DATE,
         harvest_status BOOLEAN DEFAULT FALSE,
         FOREIGN KEY (plant_id) REFERENCES catalog_plant(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
         FOREIGN KEY (garden_id) REFERENCES garden(id) ON DELETE CASCADE
       );
     `);
