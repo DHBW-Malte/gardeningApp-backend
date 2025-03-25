@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(morgan("combined")); // Allows JSON requests
 
 // IP Whitelist
-const ipWhitelist = ["127.0.0.1", "192.168.0.2", "192.168.0.126"]; // Add allowed IPs here
+const ipWhitelist = ["127.20.0.1", "192.168.0.2", "192.168.0.126"]; // Add allowed IPs here
 
 const authenticateIP = (req, res, next) => {
   const clientIP = req.ip || req.connection.remoteAddress; // Get client IP
