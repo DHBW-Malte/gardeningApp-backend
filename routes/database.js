@@ -2,7 +2,7 @@ const express = require("express");
 const pool = require("../restApi/db");
 const router = express.Router();
 
-router.post("/setup", async (req, res) => {
+router.get("/setup", async (req, res) => {
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user (
