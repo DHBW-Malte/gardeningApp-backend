@@ -14,8 +14,18 @@ jobs:
         with:
           path: .
 
+      - name: Create .env file for Docker Compose
+        run: |
+          cat <<EOF > .env
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          PORT=${{ secrets.PORT }}
+          EOF
+
       - name: Build and start containers with Docker Compose
         run: |
           docker compose down
           docker compose up -d --build
-
