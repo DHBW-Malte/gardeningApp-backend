@@ -1,4 +1,5 @@
 require("dotenv").config();
+const morgan = require("morgan");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
@@ -13,7 +14,8 @@ const databaseRoutes = require("./routes/database");
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Allows JSON requests
+app.use(express.json());
+app.use(morgan("combined")); // Allows JSON requests
 
 // IP Whitelist
 const ipWhitelist = ["127.0.0.1", "192.168.0.2", "192.168.0.126"]; // Add allowed IPs here
