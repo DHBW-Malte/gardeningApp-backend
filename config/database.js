@@ -1,5 +1,5 @@
 const express = require("express");
-const pool = require("../restApi/db");
+const pool = require("./db");
 const router = express.Router();
 
 router.get("/setup", async (req, res) => {
@@ -8,7 +8,8 @@ router.get("/setup", async (req, res) => {
       CREATE TABLE IF NOT EXISTS app_user (
         id SERIAL PRIMARY KEY, 
         username TEXT NOT NULL UNIQUE, 
-        email TEXT NOT NULL UNIQUE, 
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL UNIQUE, 
         pwd_reset_token TEXT, 
         active BOOLEAN DEFAULT FALSE, 
         token_expiring_date TIMESTAMPTZ,
