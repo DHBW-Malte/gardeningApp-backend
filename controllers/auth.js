@@ -1,18 +1,20 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const pool = require("../config/db");
 const asyncHandler = require("express-async-handler");
+const { findUserByEmail, createUser } = require("../models/auth");
 
-// Helper function to generate tokens
+
+// Helper functions to generate tokens
 const generateAccessToken = (user) =>
   jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
 const generateRefreshToken = (user) =>
   jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "1d" });
 
+// LOGIN
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const result = await pool.query("SELECT * FROM app_user WHERE email = $1", [email]);
+  const result = await findUserByEmail(email);
   const user = result.rows[0];
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -22,52 +24,52 @@ const login = asyncHandler(async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  res
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 days
-    })
-    .json({ accessToken, user });
+  res.status(200).json({
+    accessToken,
+    refreshToken,
+    user,
+  });
 });
 
+// SIGNUP
 const signup = asyncHandler(async (req, res) => {
   const { email, password, username } = req.body;
+
+  const existingUser = await findUserByEmail(email);
+  if (existingUser.rows.length > 0) {
+    return res.status(400).json({ error: "Email already registered" });
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
-  const result = await pool.query(
-    "INSERT INTO app_user (email, password, username) VALUES ($1, $2, $3) RETURNING *",
-    [email, hashedPassword, username]
-  );
+  const result = await createUser(email, hashedPassword, username);
+
   const user = result.rows[0];
 
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  res
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 1 * 24 * 60 * 60 * 1000,
-    })
-    .json({ accessToken, user });
-});
-
-const jsonrefresh = asyncHandler(async(req, res) => {
-  const refreshToken = req.cookies.refreshToken;
-
-  if (!refreshToken) return res.status(401).json({ error: "No token provided" });
-
-  jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: "Invalid token" });
-
-    const accessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.json({ accessToken });
+  res.status(200).json({
+    accessToken,
+    refreshToken,
+    user,
   });
 });
 
-module.exports = { login, signup,jsonrefresh};
+// REFRESH TOKEN
+const jsonrefresh = asyncHandler(async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) return res.status(401).json({ error: "No token provided" });
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    const newAccessToken = generateAccessToken({ id: payload.id });
+
+    res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    res.status(403).json({ error: "Invalid or expired refresh token" });
+  }
+});
+
+module.exports = { login, signup, jsonrefresh };

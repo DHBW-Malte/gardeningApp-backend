@@ -22,7 +22,6 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("combined")); // Allows JSON requests
 app.use(authenticateIP);
-app.use(errorHandler);
 app.use(cookieParser());
 // Routes
 app.use("/api/database/", databaseRoutes);
@@ -31,22 +30,7 @@ app.use("/api/users", authenticateJWT, userRoutes);
 app.use("/api/plants", authenticateJWT, plantRoutes);
 app.use("/api/gardens", authenticateJWT, gardenRoutes);
 app.use("/api/auth", jsonrefresh);
-
-//Example API endpoint to fetch data (protected by JWT)
-app.get("/api/data", async (req, res) => {
-  try {
-    const query = "SELECT * FROM catalog_plant"; 
-    const result = await pool.query(query);
-    res.json(result.rows);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the Backend API!");
-});
+app.use(errorHandler);
 
 // Start server
 app.listen(port, '0.0.0.0', async () => {
