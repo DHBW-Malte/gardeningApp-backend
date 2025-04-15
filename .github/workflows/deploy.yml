@@ -24,6 +24,8 @@ jobs:
           DB_PORT=${{ secrets.DB_PORT }}
           PORT=${{ secrets.PORT }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}
+          PEPPER=${{ secrets.PEPPER }}
           EOF
 
       - name: Build and start containers with Docker Compose
