@@ -35,6 +35,10 @@ const login = asyncHandler(async (req, res) => {
 const signup = asyncHandler(async (req, res) => {
   const { email, password, username } = req.body;
 
+  if (!email || !password || !username) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   const existingUser = await findUserByEmail(email);
   if (existingUser.rows.length > 0) {
     return res.status(400).json({ error: "Email already registered" });
