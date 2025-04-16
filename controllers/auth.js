@@ -17,7 +17,7 @@ const login = asyncHandler(async (req, res) => {
   const result = await findUserByEmail(email);
   const user = result.rows[0];
 
-  if (!user || !(await bcrypt.compare(password, user.password))) {
+  if (!user || !(await bcrypt.compare(password+ process.env.PEPPER, user.password))) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
@@ -43,8 +43,9 @@ const signup = asyncHandler(async (req, res) => {
   if (existingUser.rows.length > 0) {
     return res.status(400).json({ error: "Email already registered" });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
+  
+  const pepper = process.env.PEPPER;
+  const hashedPassword = await bcrypt.hash(password + pepper, 10);
   const result = await createUser(email, hashedPassword, username);
 
   const user = result.rows[0];

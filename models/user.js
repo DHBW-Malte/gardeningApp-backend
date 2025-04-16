@@ -6,14 +6,14 @@ const findUserById = (id) => {
 
 const createUser = (username, email) => {
   return pool.query(
-    "INSERT INTO app_user (username, email) VALUES ($1, $2) RETURNING *",
+    "INSERT INTO app_user (username, email) VALUES ($1, $2) RETURNING id,username,email",
     [username, email]
   );
 };
 
 const updateUser = (username, email, id) => {
   return pool.query(
-    "UPDATE app_user SET username = $1, email = $2 WHERE id = $3 RETURNING *",
+    "UPDATE app_user SET username = $1, email = $2 WHERE id = $3 RETURNING id,username,email",
     [username, email, id]
   );
 };

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUserProfile, createUserProfile, updateUserProfile, getUserGardens,getUserplants } = require("../controllers/user");
+const { getUserProfile, createUserProfile, updateUserProfile, getUserGardens, getUserPlants } = require("../controllers/user");
 
 // Get User Profile
 router.get("/:id", getUserProfile);
@@ -15,6 +15,6 @@ router.put("/:id", updateUserProfile);
 router.get("/:id/gardens", getUserGardens);
 
 // Get all plants of a user
-router.get("/:id/plants", getUserplants);
+router.get("/:id/plants", getUserPlants);
 
 module.exports = router;

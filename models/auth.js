@@ -8,7 +8,7 @@ const findUserByEmail = (email) => {
 // Create a new user
 const createUser = (email, hashedPassword, username) => {
   return pool.query(
-    "INSERT INTO app_user (email, password, username) VALUES ($1, $2, $3) RETURNING *",
+    "INSERT INTO app_user (email, password, username) VALUES ($1, $2, $3) RETURNING id,username,email ",
     [email, hashedPassword, username]
   );
 };
