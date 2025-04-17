@@ -27,7 +27,7 @@ const login = asyncHandler(async (req, res) => {
   res.status(200).json({
     accessToken,
     refreshToken,
-    user: { id, email, name },
+    user: { id: user.id, email: user.email, name: user.username },
   });
 });
 
@@ -55,7 +55,7 @@ const signup = asyncHandler(async (req, res) => {
   res.status(200).json({
     accessToken,
     refreshToken,
-    user: { id, email, name },
+    user: { id: user.id, email: user.email, name: user.username },
   });
 });
 
