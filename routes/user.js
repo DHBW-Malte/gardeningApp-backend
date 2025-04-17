@@ -15,6 +15,6 @@ router.put("/:id", updateUserProfile);
 router.get("/plants", getUserPlants);
 
 // Get all gardens of a user
-router.get("/:id/gardens", getUserGardens);
+router.get("/gardens", getUserGardens);
 
 module.exports = router
