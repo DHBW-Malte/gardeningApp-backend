@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { getUserProfile, createUserProfile, updateUserProfile, getUserGardens } = require("../controllers/user");
+const { getUserProfile, createUserProfile, updateUserProfile, getUserPlants, getUserGardens } = require("../controllers/user");
 
 // Get User Profile
 router.get("/:id", getUserProfile);
@@ -11,7 +11,10 @@ router.post("/", createUserProfile);
 // Update User Profile
 router.put("/:id", updateUserProfile);
 
+// Get all plants of a user
+router.get("/plants", getUserPlants);
+
 // Get all gardens of a user
-router.get("/:id/gardens", getUserGardens);
+router.get("/gardens", getUserGardens);
 
 module.exports = router;
