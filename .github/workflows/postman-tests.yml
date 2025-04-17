@@ -2,7 +2,7 @@ name: Run Postman Tests
 on: [push, pull_request]
 jobs:
   test:
-    runs-on: own-server
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
