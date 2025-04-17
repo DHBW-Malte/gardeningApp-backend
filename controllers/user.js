@@ -33,7 +33,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // Get all plants for a user
 const getUserPlants = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const result = await findPlantsByUser(id);
+  const result = await findPlantsByUser(userId);
 
   const userPlants = result.rows.map(row => ({
     id: row.user_plant_id,
