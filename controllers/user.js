@@ -97,8 +97,8 @@ const getUserPlants = asyncHandler(async (req, res) => {
 
 // Get all gardens for a user
 const getUserGardens = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const result = await findGardensByUser(id);
+  const userId = req.user.id;
+  const result = await findGardensByUser(userId);
   res.json(result.rows);
 });
 
