@@ -1,6 +1,6 @@
 function formatCatalogPlant(row = {}) {
   return {
-    id: row.catalog_plant_id ?? null,
+    id: row.id ?? null,
 
     name: {
       commonName: row.common_name ?? "Unknown",
