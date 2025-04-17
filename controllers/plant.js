@@ -1,27 +1,36 @@
 const asyncHandler = require("express-async-handler");
 const {getAllCatalogPlants,getCatalogPlantById,searchCatalogPlants, createUserPlant,updateUserPlant,deleteUserPlant} = require("../models/plant");
+const { formatCatalogPlant, formatUserPlant } = require("../utils/plantFormatter");
 
-// Get all plants
+// Get all catalog plants
 const getPlants = asyncHandler(async (req, res) => {
-    const result = await getAllCatalogPlants();
-    res.json(result.rows);
+  const result = await getAllCatalogPlants();
+
+  const catalogPlants = result.rows.map(formatCatalogPlant);
+  res.json(catalogPlants);
 });
 
 // Get a plant by ID
 const getPlantById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-    const result = await getCatalogPlantById(id);
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Plant not found" });
-    }
-    res.json(result.rows[0]);
+  const result = await getCatalogPlantById(id);
+  
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: "Plant not found" });
+  }
+
+  const plant = formatCatalogPlant(result.rows[0]);
+  res.json(plant);
 });
+
 
 // Search for plants by common name
 const searchPlants = asyncHandler(async (req, res) => {
   const { query } = req.query;
     const result = await searchCatalogPlants(query);
-    res.json(result.rows);
+
+    const searchResult = result.rows.map(formatCatalogPlant);
+    res.json(searchResult);
 });
 
 
@@ -29,7 +38,9 @@ const searchPlants = asyncHandler(async (req, res) => {
 const createPlant = asyncHandler(async (req, res) => {
   const { nickname, plant_id, user_id, garden_id } = req.body;
     const result = await createUserPlant(nickname, plant_id, user_id, garden_id);
-    res.status(201).json(result.rows[0]);
+    
+    const updatedPlant = formatUserPlant(result.rows[0]);
+    res.json(updatedPlant);
 });
 
 
@@ -41,7 +52,9 @@ const updatePlant = asyncHandler(async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Plant not found for this user" });
     }
-    res.json(result.rows[0]);
+
+    const updatedPlant = formatUserPlant(result.rows[0]);
+    res.json(updatedPlant);
 });
 
 
