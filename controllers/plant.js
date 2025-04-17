@@ -36,7 +36,8 @@ const searchPlants = asyncHandler(async (req, res) => {
 
 // Create a new plant for user
 const createPlant = asyncHandler(async (req, res) => {
-  const { nickname, plant_id, user_id, garden_id } = req.body;
+  const user_id = req.user.id;
+  const { nickname, plant_id, garden_id } = req.body;
     const result = await createUserPlant(nickname, plant_id, user_id, garden_id);
     
     const updatedPlant = formatUserPlant(result.rows[0]);
@@ -46,9 +47,10 @@ const createPlant = asyncHandler(async (req, res) => {
 
 // Update a plant for user
 const updatePlant = asyncHandler(async (req, res) => {
+  const user_id = req.user.id;
   const { id } = req.params;  // id of the user_plant entry
   const { nickname, date_watered, harvest_status } = req.body;
-    const result = await updateUserPlant(nickname, date_watered, harvest_status, id, req.user.id);
+    const result = await updateUserPlant(nickname, date_watered, harvest_status, id, user_id);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Plant not found for this user" });
     }
@@ -60,8 +62,9 @@ const updatePlant = asyncHandler(async (req, res) => {
 
 // Delete a plant for user
 const deletePlant = asyncHandler(async (req, res) => {
+  const user_id = req.user.id;
   const { id } = req.params;  // id of the user_plant entry
-    const result = await deleteUserPlant(id, req.user.id);
+    const result = await deleteUserPlant(id, user_id);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "Plant not found for this user" });
     }

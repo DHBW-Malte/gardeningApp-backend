@@ -9,7 +9,7 @@ router.get("/user/:id", getUserProfile);
 router.post("/", createUserProfile);
 
 // Update User Profile
-router.put("/:id", updateUserProfile);
+router.put("/", updateUserProfile);
 
 // Get all plants of a user
 router.get("/plants", getUserPlants);
