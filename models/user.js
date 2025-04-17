@@ -22,14 +22,9 @@ const findGardensByUser = (userId) => {
   return pool.query("SELECT * FROM garden WHERE user_id = $1", [userId]);
 };
 
-const findPlantsByUser = (userId) => {
-  return pool.query("SELECT * FROM user_plant WHERE user_id = $1", [userId]);
-};
-
 module.exports = {
   findUserById,
   createUser,
   updateUser,
   findGardensByUser,
-  findPlantsByUser,
 };

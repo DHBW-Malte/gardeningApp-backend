@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { 
   getPlants, 
-  getPlantById, 
+  getPlantById,
+  getUserPlants,
   createPlant, 
   updatePlant, 
   deletePlant,
@@ -17,6 +18,9 @@ router.get("/plants/:id", getPlantById);
 
 // Search plants by common name
 router.get("/plants/search", searchPlants);
+
+// Get all plants of a user
+router.get("/:id/plants", getUserPlants);
 
 // Create a new plant
 router.post("/plants", createPlant);

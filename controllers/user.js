@@ -35,11 +35,4 @@ const getUserGardens = asyncHandler(async (req, res) => {
   res.json(result.rows);
 });
 
-// Get all plants for a user
-const getUserPlants = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const result = await findPlantsByUser(id);
-  res.json(result.rows);
-});
-
-module.exports = {getUserProfile,createUserProfile,updateUserProfile, getUserGardens,getUserPlants};
+module.exports = {getUserProfile,createUserProfile,updateUserProfile, getUserGardens};
