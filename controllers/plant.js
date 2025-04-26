@@ -53,9 +53,9 @@ const createPlant = asyncHandler(async (req, res) => {
 const updatePlant = asyncHandler(async (req, res) => {
   const user_id = req.user.id;
   const { id } = req.params;
-  const { nickname, date_watered, harvest_status } = req.body;
+  const { updateData } = req.body;
 
-  const updated = await updateUserPlant(nickname, date_watered, harvest_status, id, user_id);
+  const updated = await updateUserPlant(updateData, id, user_id);
 
   if (!updated) {
     return res.status(404).json({ error: "Plant not found for this user" });

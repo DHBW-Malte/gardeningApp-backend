@@ -115,13 +115,37 @@ const createUserPlant = async (nickname, plant_id, user_id, garden_id) => {
   return getFullUserPlantById(result.rows[0].id);
 };
 
-const updateUserPlant = async (nickname, date_watered, harvest_status, id, user_id) => {
-  await pool.query(
-    "UPDATE user_plant SET nickname = $1, date_watered = $2, harvest_status = $3 WHERE id = $4 AND user_id = $5",
-    [nickname, date_watered, harvest_status, id, user_id]
-  );
-  return getFullUserPlantById(id, user_id);
+const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
+  const allowedFields = ["nickname", "garden_id", "date_watered", "harvest_status"];
+  const setClauses = [];
+  const values = [];
+  let index = 1;
+
+  for (const field of allowedFields) {
+    if (fieldsToUpdate[field] !== undefined) {
+      setClauses.push(`${field} = $${index}`);
+      values.push(fieldsToUpdate[field]);
+      index++;
+    }
+  }
+
+  if (setClauses.length === 0) {
+    throw new Error("No valid fields provided for update");
+  }
+
+  values.push(id, user_id);
+
+  const query = `
+    UPDATE user_plant 
+    SET ${setClauses.join(", ")}
+    WHERE id = $${index} AND user_id = $${index + 1}
+    RETURNING *;
+  `;
+
+  const result = await pool.query(query, values);
+  return result.rows[0];
 };
+
 
 const deleteUserPlant = (id, user_id) => {
   return pool.query(
