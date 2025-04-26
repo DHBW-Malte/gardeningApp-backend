@@ -67,6 +67,7 @@ const updatePlant = asyncHandler(async (req, res) => {
 
 // Delete a plant for user
 const deletePlant = asyncHandler(async (req, res) => {
+  console.log("Deleting plant...");
   const user_id = req.user.id;
   const { id } = req.params;  // id of the user_plant entry
     const result = await deleteUserPlant(id, user_id);
