@@ -23,9 +23,9 @@ const createUserProfile = asyncHandler(async (req, res) => {
 
 // Update User Profile
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const userId = req.user.id;
   const { username, email } = req.body;
-  const result = await updateUser(username, email, id);
+  const result = await updateUser(username, email, userId);
   res.json(result.rows[0]);
 });
 

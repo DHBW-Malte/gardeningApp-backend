@@ -54,19 +54,65 @@ const findPlantsByUser = (userId) => {
   `, [userId]);
 };
 
+const getFullUserPlantById = async (id, user_id = null) => {
+  const whereClause = user_id
+    ? 'WHERE user_plant.id = $1 AND user_plant.user_id = $2'
+    : 'WHERE user_plant.id = $1';
 
-const createUserPlant = (nickname, plant_id, user_id, garden_id) => {
-  return pool.query(
-    "INSERT INTO user_plant (nickname, plant_id, user_id, garden_id, date_added) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING *",
-    [nickname, plant_id, user_id, garden_id]
-  );
+  const values = user_id ? [id, user_id] : [id];
+
+  const result = await pool.query(`
+    SELECT 
+      user_plant.id AS user_plant_id,
+      user_plant.nickname,
+      user_plant.user_id,
+      user_plant.garden_id,
+      user_plant.plant_id,
+      user_plant.date_added,
+      user_plant.date_watered,
+      user_plant.harvest_status,
+      catalog_plant.id AS catalog_plant_id,
+      catalog_plant.common_name,
+      catalog_plant.scientific_name,
+      catalog_plant.width,
+      catalog_plant.height,
+      catalog_plant.min_temperature,
+      catalog_plant.max_temperature,
+      catalog_plant.planting_start,
+      catalog_plant.planting_end,
+      catalog_plant.blooming_start,
+      catalog_plant.blooming_end,
+      catalog_plant.flower_color,
+      catalog_plant.harvest_start,
+      catalog_plant.harvest_end,
+      catalog_plant.edible_parts,
+      catalog_plant.yield,
+      catalog_plant.sun_light,
+      catalog_plant.water_frequency,
+      catalog_plant.feeding_frequency,
+      catalog_plant.fertilizer_type
+    FROM user_plant
+    JOIN catalog_plant ON user_plant.plant_id = catalog_plant.id
+    ${whereClause}
+  `, values);
+
+  return result.rows[0];
 };
 
-const updateUserPlant = (nickname, date_watered, harvest_status, id, user_id) => {
-  return pool.query(
-    "UPDATE user_plant SET nickname = $1, date_watered = $2, harvest_status = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
+const createUserPlant = async (nickname, plant_id, user_id, garden_id) => {
+  const result = await pool.query(
+    "INSERT INTO user_plant (nickname, plant_id, user_id, garden_id, date_added) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id",
+    [nickname, plant_id, user_id, garden_id]
+  );
+  return getFullUserPlantById(result.rows[0].id);
+};
+
+const updateUserPlant = async (nickname, date_watered, harvest_status, id, user_id) => {
+  await pool.query(
+    "UPDATE user_plant SET nickname = $1, date_watered = $2, harvest_status = $3 WHERE id = $4 AND user_id = $5",
     [nickname, date_watered, harvest_status, id, user_id]
   );
+  return getFullUserPlantById(id, user_id);
 };
 
 const deleteUserPlant = (id, user_id) => {
