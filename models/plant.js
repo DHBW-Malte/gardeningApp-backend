@@ -116,7 +116,7 @@ const createUserPlant = async (nickname, plant_id, user_id, garden_id) => {
 };
 
 const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
-  const allowedFields = ["nickname", "garden_id", "date_watered", "harvest_status"];
+  const allowedFields = ["nickName", "gardenId", "date_watered", "harvest_status"];
   const setClauses = [];
   const values = [];
   let index = 1;
