@@ -10,6 +10,7 @@ const getCatalogPlantById = (id) => {
 };
 
 const searchCatalogPlants = async (query) => {
+  console.log("Executing query with:", query);
   try {
     const res = await pool.query(
       "SELECT * FROM catalog_plant WHERE common_name ILIKE $1",
