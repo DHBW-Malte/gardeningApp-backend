@@ -28,9 +28,11 @@ const getPlantById = asyncHandler(async (req, res) => {
 const searchPlants = asyncHandler(async (req, res) => {
   const { query } = req.query;
   const result = await searchCatalogPlants(query);
-  if (!result) {
-    return res.json([]).status(404);
+
+  if (!result || !result.rows || result.rows.length === 0) {
+    return res.status(404).json({ error: "No plant matches the query."});
   }
+
   const searchResult = result.rows.map(formatCatalogPlant);
   res.json(searchResult);
 });
@@ -67,7 +69,6 @@ const updatePlant = asyncHandler(async (req, res) => {
 
 // Delete a plant for user
 const deletePlant = asyncHandler(async (req, res) => {
-  console.log("Deleting plant...");
   const user_id = req.user.id;
   const { id } = req.params;  // id of the user_plant entry
     const result = await deleteUserPlant(id, user_id);
