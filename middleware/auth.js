@@ -10,6 +10,7 @@ const authenticateJWT = (req, res, next) => {
     next();
   } catch (error) {
     res.status(400).json({ error: "Invalid token." });
+    console.log("Invalid Token");
   }
 };
 
