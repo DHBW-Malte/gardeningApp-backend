@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const {getAllCatalogPlants,getCatalogPlantById,searchCatalogPlants, createUserPlant,updateUserPlant,deleteUserPlant} = require("../models/plant");
+const {getAllCatalogPlants, getCatalogPlantById, searchCatalogPlants, createUserPlant, updateUserPlant, deleteUserPlant} = require("../models/plant");
 const { formatCatalogPlant, formatUserPlant } = require("../utils/plantFormatter");
 
 // Get all catalog plants

@@ -12,14 +12,14 @@ const {
 // Get all plants
 router.get("/plants", getPlants);
 
-// Get a plant by ID
-router.get("/plants/:id", getPlantById);
+// Create a new plant
+router.post("/plants", createPlant);
 
 // Search plants by common name
 router.get("/plants/search", searchPlants);
 
-// Create a new plant
-router.post("/plants", createPlant);
+// Get a plant by ID
+router.get("/plants/:id", getPlantById);
 
 // Update a plant
 router.put("/plants/:id", updatePlant);
