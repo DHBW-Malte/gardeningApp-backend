@@ -9,12 +9,19 @@ const getCatalogPlantById = (id) => {
   return pool.query("SELECT * FROM catalog_plant WHERE id = $1", [id]);
 };
 
-const searchCatalogPlants = (query) => {
-  return pool.query(
-    "SELECT * FROM catalog_plant WHERE common_name ILIKE $1",
-    [`%${query}%`]
-  );
+const searchCatalogPlants = async (query) => {
+  try {
+    const res = await pool.query(
+      "SELECT * FROM catalog_plant WHERE common_name ILIKE $1",
+      [`%${query}%`]
+    );
+    return res;
+  } catch (error) {
+    console.error("Error querying catalog_plant:", error);
+    throw error;
+  }
 };
+
 
 // User plant queries
 const findPlantsByUser = (userId) => {
