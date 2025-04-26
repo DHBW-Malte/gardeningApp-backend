@@ -26,6 +26,7 @@ const getPlantById = asyncHandler(async (req, res) => {
 
 // Search for plants by common name
 const searchPlants = asyncHandler(async (req, res) => {
+  onsole.log("TOP OF searchPlants");
   const { query } = req.query;
   console.log("Query", query);
   const result = await searchCatalogPlants(query);
