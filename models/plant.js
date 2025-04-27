@@ -122,7 +122,7 @@ const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
   let index = 1;
 
   for (const field of allowedFields) {
-    if (fieldsToUpdate[field] !== undefined || "" || null) {
+    if (fieldsToUpdate[field] !== undefined && fieldsToUpdate[field] !== "" && fieldsToUpdate[field] !== null) {
       setClauses.push(`${field} = $${index}`);
       values.push(fieldsToUpdate[field]);
       index++;

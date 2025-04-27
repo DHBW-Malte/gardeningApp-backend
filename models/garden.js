@@ -22,7 +22,7 @@ const updateGardenById = async (fieldsToUpdate, id, user_id) => {
   let index = 1;
 
   for (const field of allowedFields) {
-    if(fieldsToUpdate[field] !== undefined || "" || null) {
+    if (fieldsToUpdate[field] !== undefined && fieldsToUpdate[field] !== "" && fieldsToUpdate[field] !== null) {
       setClauses.push(`${field} = $${index}`);
       values.push(fieldsToUpdate[field]);
       index++;
@@ -42,9 +42,13 @@ const updateGardenById = async (fieldsToUpdate, id, user_id) => {
     RETURNING *;
   `;
 
+  console.log("Running query:", query);
+  console.log("With values:", values);
+
   const result = await pool.query(query, values);
   return result.rows[0];
 };
+
 
 // Delete a garden
 const deleteGardenById = async (id, userId) => {
