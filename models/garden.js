@@ -25,6 +25,7 @@ const updateGardenById = async (fieldsToUpdate, id, user_id) => {
     if(fieldsToUpdate[field] !== undefined || "" || null) {
       setClauses.push(`${field} = $${index}`);
       values.push(fieldsToUpdate[field]);
+      index++;
     }
   }
 
