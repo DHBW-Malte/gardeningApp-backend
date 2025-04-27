@@ -54,7 +54,6 @@ const updatePlant = asyncHandler(async (req, res) => {
   const user_id = req.user.id;
   const { id } = req.params;
   const { updateData } = req.body;
-  console.log("Updatedata: ", updateData)
 
   const updated = await updateUserPlant(updateData, id, user_id);
 

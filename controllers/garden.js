@@ -26,12 +26,12 @@ const updateGarden = asyncHandler(async (req, res) => {
   const result = await updateGardenById(body, id, user_id);
   console.log("Result in Controller: ", result);
 
-  if (result.rows.length === 0) {
+  if (!result) {
     res.status(404);
     throw new Error("Garden not found");
   }
 
-  res.json(result.rows[0]);
+  res.json(result);
 });
 
 // Delete a garden by user
@@ -41,7 +41,7 @@ const deleteGarden = asyncHandler(async (req, res) => {
 
   const result = await deleteGardenById(id, user_id);
 
-  if (result.rows.length === 0) {
+  if (!result) {
     res.status(404);
     throw new Error("Garden not found");
   }
