@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const {getAllCatalogPlants, getCatalogPlantById, searchCatalogPlants, createUserPlant, updateUserPlant, deleteUserPlant} = require("../models/plant");
+const {getAllCatalogPlants, getCatalogPlantById, searchCatalogPlants, createUserPlant, updateUserPlant, deleteUserPlant, batchUpdatePlants} = require("../models/plant");
 const { formatCatalogPlant, formatUserPlant } = require("../utils/plantFormatter");
 
 // Get all catalog plants
@@ -65,6 +65,19 @@ const updatePlant = asyncHandler(async (req, res) => {
   res.json(formatted);
 });
 
+const batchUpdateWatered = asyncHandler(async (req, res) => {
+  const { plantIds } = req.body;
+  const updated = await batchUpdatePlants(plantIds);
+
+  if (!updated) {
+    return res.status(404).json({ error: "Plants not found for this update" });
+  }
+
+  const formatted = formatUserPlant(updated)
+  return res.status(200).json(formatted)
+
+});
+
 
 
 // Delete a plant for user
@@ -79,4 +92,4 @@ const deletePlant = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { getPlants, getPlantById, createPlant, updatePlant, deletePlant, searchPlants };
+module.exports = { getPlants, getPlantById, createPlant, updatePlant, batchUpdateWatered, deletePlant, searchPlants };

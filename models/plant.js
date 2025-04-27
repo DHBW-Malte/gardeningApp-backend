@@ -146,6 +146,22 @@ const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
   return result.rows[0];
 };
 
+const batchUpdatePlants = async (plantIds) => {
+  const dateWatered = new Date().toISOString().split('T')[0];
+
+  const query = `
+    UPDATE user_plant
+    SET date_watered = $1
+    WHERE id = ANY($2::int[])
+    RETURNING *;
+  `;
+
+  const values = [dateWatered, plantIds];
+
+  const result = await pool.query(query, values);
+  return result.rows;
+};
+
 
 const deleteUserPlant = (id, user_id) => {
   return pool.query(
@@ -161,5 +177,6 @@ module.exports = {
   findPlantsByUser,
   createUserPlant,
   updateUserPlant,
+  batchUpdatePlants,
   deleteUserPlant,
 };

@@ -6,7 +6,8 @@ const {
   createPlant, 
   updatePlant, 
   deletePlant,
-  searchPlants
+  searchPlants,
+  batchUpdateWatered
 } = require("../controllers/plant");
 
 // Get all plants
@@ -17,6 +18,8 @@ router.post("/plants", createPlant);
 
 // Search plants by common name
 router.get("/plants/search", searchPlants);
+
+router.put("/plants/batch", batchUpdateWatered);
 
 // Get a plant by ID
 router.get("/plants/:id", getPlantById);
