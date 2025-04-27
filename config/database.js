@@ -1,72 +1,28 @@
-const express = require("express");
+// seedPlants.js
 const pool = require("./db");
-const router = express.Router();
 
-router.get("/setup", async (req, res) => {
+async function seedPlants() {
   try {
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS app_user (
-        id SERIAL PRIMARY KEY, 
-        username TEXT NOT NULL UNIQUE, 
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL UNIQUE, 
-        pwd_reset_token TEXT, 
-        active BOOLEAN DEFAULT FALSE, 
-        token_expiring_date TIMESTAMPTZ,
-        salt TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS catalog_plant (
-        id SERIAL PRIMARY KEY,
-        common_name TEXT NOT NULL,
-        scientific_name TEXT NOT NULL,
-        width INTEGER,
-        height INTEGER,
-        min_temperature INTEGER,
-        max_temperature INTEGER,
-        planting_start TEXT,
-        planting_end TEXT,
-        blooming_start TEXT,
-        blooming_end TEXT,
-        flower_color TEXT,
-        harvest_start TEXT,
-        harvest_end TEXT,
-        edible_parts TEXT,
-        yield TEXT,
-        sun_light TEXT,
-        water_frequency TEXT,
-        feeding_frequency TEXT,
-        fertilizer_type TEXT
-      );
-
-      CREATE TABLE IF NOT EXISTS garden (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER,
-        name TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE
-      );
-
-      CREATE TABLE IF NOT EXISTS user_plant (
-        id SERIAL PRIMARY KEY,
-        nickname TEXT NOT NULL,
-        plant_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        garden_id INTEGER NOT NULL,
-        date_added TIMESTAMPTZ,
-        date_watered DATE,
-        harvest_status BOOLEAN DEFAULT FALSE,
-        FOREIGN KEY (plant_id) REFERENCES catalog_plant(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES app_user(id) ON DELETE CASCADE,
-        FOREIGN KEY (garden_id) REFERENCES garden(id) ON DELETE CASCADE
-      );
+      INSERT INTO catalog_plant (common_name, scientific_name, width, height, min_temperature, max_temperature, planting_start, planting_end, blooming_start, blooming_end, flower_color, harvest_start, harvest_end, edible_parts, yield, sun_light, water_frequency, feeding_frequency, fertilizer_type)
+      VALUES 
+        ('Lavender', 'Lavandula angustifolia', 60, 90, -5, 30, 'April', 'June', 'June', 'August', 'Purple', NULL, NULL, NULL, NULL, 'Full Sun', 'WEEKLY', 'MONTHLY', 'All-purpose fertilizer'),
+        ('Carrot', 'Daucus carota', 5, 30, 4, 24, 'March', 'July', NULL, NULL, NULL, 'June', 'November', 'Root', '1-2 kg per m²', 'Full Sun', 'EVERY 3 DAYS', 'MONTHLY', 'Balanced NPK'),
+        ('Basil', 'Ocimum basilicum', 30, 60, 10, 30, 'April', 'June', 'June', 'September', 'White', 'June', 'October', 'Leaves', 'Frequent small harvests', 'Full Sun', 'DAILY', 'WEEKLY', 'Liquid Organic Fertilizer'),
+        ('Blueberry', 'Vaccinium corymbosum', 120, 180, -20, 30, 'March', 'April', 'April', 'May', 'White/Pink', 'June', 'August', 'Fruit', '2-4 kg per bush', 'Full Sun to Partial Shade', 'WEEKLY', 'BIWEEKLY', 'Acidic Fertilizer'),
+        ('Rosemary', 'Salvia rosmarinus', 90, 150, -10, 30, 'March', 'May', 'May', 'August', 'Blue', NULL, NULL, 'Leaves', 'Frequent small harvests', 'Full Sun', 'WEEKLY', 'MONTHLY', 'Low Nitrogen Fertilizer'),
+        ('Zucchini', 'Cucurbita pepo', 90, 60, 10, 35, 'April', 'June', 'June', 'August', 'Yellow', 'June', 'September', 'Fruit', '3-9 kg per plant', 'Full Sun', 'DAILY', 'WEEKLY', 'High Potassium Fertilizer'),
+        ('Strawberry', 'Fragaria × ananassa', 30, 20, -5, 30, 'March', 'May', 'April', 'June', 'White', 'May', 'July', 'Fruit', '0.5-1 kg per plant', 'Full Sun', 'DAILY', 'BIWEEKLY', 'Balanced NPK'),
+        ('Sunflower', 'Helianthus annuus', 60, 300, 10, 35, 'April', 'May', 'July', 'August', 'Yellow', 'September', 'October', 'Seeds', '500-1000 seeds per plant', 'Full Sun', 'EVERY 2 DAYS', 'MONTHLY', 'Slow-release Fertilizer'),
+        ('Mint', 'Mentha spicata', 45, 60, 10, 30, 'April', 'June', 'May', 'August', 'Purple', NULL, NULL, 'Leaves', 'Frequent small harvests', 'Partial Shade to Full Sun', 'DAILY', 'WEEKLY', 'Organic Compost');
     `);
-
-    res.status(200).json({ message: "Tables created successfully" });
-
-  } catch (error) {
-    console.error("Error creating tables:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.log("Seeding done ✅");
+  } catch (err) {
+    console.error("Seeding failed ❌", err);
+  } finally {
+    await pool.end();
   }
-});
+}
 
-module.exports = router;
+seedPlants();
+
