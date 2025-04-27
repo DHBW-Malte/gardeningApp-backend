@@ -15,6 +15,7 @@ const insertGarden = (userId, name) => {
 
 // Update a garden
 const updateGardenById = async (fieldsToUpdate, id, user_id) => {
+  console.log("Provided fields: ", fieldsToUpdate);
   const allowedFields = ["name", "location"];
   const values = [];
   const setClauses = [];
