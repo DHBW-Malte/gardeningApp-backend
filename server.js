@@ -12,7 +12,6 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const plantRoutes = require("./routes/plant");
 const gardenRoutes = require("./routes/garden");
-const databaseRoutes = require("./config/database");
 const errorHandler = require("./middleware/errorHandler");
 const authenticateIP = require("./middleware/ip");
 const authenticateJWT = require("./middleware/auth");
@@ -24,7 +23,6 @@ app.use(morgan("combined")); // Allows JSON requests
 app.use(authenticateIP);
 app.use(cookieParser());
 // Routes
-app.use("/api/database/", databaseRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", authenticateJWT, userRoutes);
 app.use("/api/plants", authenticateJWT, plantRoutes);
