@@ -35,7 +35,7 @@ const updateGardenById = async (fieldsToUpdate, id, user_id) => {
   values.push(id, user_id);
 
   const query = `
-    UPDATE user_plant 
+    UPDATE garden
     SET ${setClauses.join(", ")}
     WHERE id = $${index} AND user_id = $${index + 1}
     RETURNING *;
