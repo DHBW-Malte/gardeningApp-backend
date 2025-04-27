@@ -122,14 +122,12 @@ const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
   let index = 1;
 
   for (const field of allowedFields) {
-    if (fieldsToUpdate[field] !== undefined) {
+    if (fieldsToUpdate[field] !== undefined || "" || null) {
       setClauses.push(`${field} = $${index}`);
       values.push(fieldsToUpdate[field]);
       index++;
     }
   }
-
-  console.log("Fields to Update: ", setClauses)
 
   if (setClauses.length === 0) {
     throw new Error("No valid fields provided for update");

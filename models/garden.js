@@ -14,16 +14,39 @@ const insertGarden = (userId, name) => {
 };
 
 // Update a garden
-const updateGardenById = (name, id, userId) => {
-  return pool.query(
-    "UPDATE garden SET name = $1 WHERE id = $2 AND user_id = $3 RETURNING *",
-    [name, id, userId]
-  );
+const updateGardenById = async (fieldsToUpdate, id, user_id) => {
+  const allowedFields = ["name", "location"];
+  const values = [];
+  const setClauses = [];
+  let index = 1;
+
+  for (const field of allowedFields) {
+    if(fieldsToUpdate[field] !== undefined || "" || null) {
+      setClauses.push(`${field} = $${index}`);
+      values.push(fieldsToUpdate[field]);
+    }
+  }
+
+  if (setClauses.length === 0) {
+    throw new Error("No valid fields provided for update");
+  }
+
+  values.push(id, user_id);
+
+  const query = `
+    UPDATE user_plant 
+    SET ${setClauses.join(", ")}
+    WHERE id = $${index} AND user_id = $${index + 1}
+    RETURNING *;
+  `;
+
+  const result = await pool.query(query, values);
+  return result.rows[0];
 };
 
 // Delete a garden
-const deleteGardenById = (id, userId) => {
-  return pool.query(
+const deleteGardenById = async (id, userId) => {
+  return await pool.query(
     "DELETE FROM garden WHERE id = $1 AND user_id = $2 RETURNING *",
     [id, userId]
   );
