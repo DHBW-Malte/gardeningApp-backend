@@ -159,6 +159,7 @@ const batchUpdatePlants = async (plantIds) => {
   const values = [dateWatered, plantIds];
 
   const result = await pool.query(query, values);
+  console.log(result.rows)
   return result.rows;
 };
 
