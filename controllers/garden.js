@@ -20,10 +20,10 @@ const createGarden = asyncHandler(async (req, res) => {
 // Update the garden by user
 const updateGarden = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const body = req.body;
   const user_id = req.user.id;
 
-  const result = await updateGardenById(name, id, user_id);
+  const result = await updateGardenById(body, id, user_id);
 
 
   if (result.rows.length === 0) {
