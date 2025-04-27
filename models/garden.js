@@ -46,6 +46,7 @@ const updateGardenById = async (fieldsToUpdate, id, user_id) => {
   console.log("With values:", values);
 
   const result = await pool.query(query, values);
+  console.log("Query result: ", result);
   return result.rows[0];
 };
 
