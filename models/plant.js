@@ -147,6 +147,7 @@ const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
 };
 
 const batchUpdatePlants = async (plantIds) => {
+  console.log(plantIds);
   const dateWatered = new Date().toISOString().split('T')[0];
   console.log(dateWatered);
   const query = `
