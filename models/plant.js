@@ -109,7 +109,7 @@ const getFullUserPlantById = async (id, user_id = null) => {
 
 const createUserPlant = async (nickname, plant_id, user_id, garden_id) => {
   const result = await pool.query(
-    "INSERT INTO user_plant (nickname, plant_id, user_id, garden_id, date_added) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP) RETURNING id",
+    "INSERT INTO user_plant (nickname, plant_id, user_id, garden_id, date_added, date_watered) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id",
     [nickname, plant_id, user_id, garden_id]
   );
   return getFullUserPlantById(result.rows[0].id);
