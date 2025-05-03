@@ -16,6 +16,8 @@ const errorHandler = require("./middleware/errorHandler");
 const authenticateIP = require("./middleware/ip");
 const authenticateJWT = require("./middleware/auth");
 const jsonrefresh = require("./routes/auth");
+const sensorRoutes = require("./routes/sensor");
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -29,6 +31,7 @@ app.use("/api/plants", authenticateJWT, plantRoutes);
 app.use("/api/gardens", authenticateJWT, gardenRoutes);
 app.use("/api/auth", jsonrefresh);
 app.use(errorHandler);
+app.use("/api/sensor", sensorRoutes);
 
 // Start server
 app.listen(port, '0.0.0.0', async () => {
