@@ -31,7 +31,7 @@ app.use("/api/plants", authenticateJWT, plantRoutes);
 app.use("/api/gardens", authenticateJWT, gardenRoutes);
 app.use("/api/auth", jsonrefresh);
 app.use(errorHandler);
-app.use("/api/sensor", sensorRoutes);
+app.use("/api", sensorRoutes);
 
 // Start server
 app.listen(port, '0.0.0.0', async () => {
