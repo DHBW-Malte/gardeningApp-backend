@@ -25,3 +25,10 @@ exports.updateSensor = (id, name, moisture) => {
 exports.deleteSensor = (id) => {
   return pool.query("DELETE FROM moisture_Sensor WHERE id = $1 RETURNING *", [id]);
 };
+
+exports.insertSensorData = (moisture, id) => {
+  return pool.query(
+    "UPDATE moisture_Sensor SET current_moisture_level = $1 WHERE id = $2 RETURNING *",
+    [moisture, id]
+  );
+};

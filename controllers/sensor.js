@@ -1,5 +1,34 @@
 const asyncHandler = require("express-async-handler");
 const sensorModel = require("../models/sensor");
+const jwt = require("jsonwebtoken");
+
+exports.pairSensor = asyncHandler(async (req, res) => {
+  const { name, user_id, current_moisture_level } = req.body;
+
+  const result = await sensorModel.insertSensor(user_id, name, current_moisture_level);
+  const sensor = result.rows[0];
+
+  const token = jwt.sign(
+    { sensorId: sensor.id, user_id },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  res.status(201).json({
+    message: "Sensor paired successfully",
+    token,
+    sensor,
+  });
+});
+
+exports.submitSensorData = asyncHandler(async (req, res) => {
+  const { moisture } = req.body;
+  const { id } = req.sensor;
+
+  const result = await sensorModel.insertSensorData(moisture, id);
+
+  res.status(201).json({ success: true, data: result.rows[0] });
+});
 
 exports.getAllSensors = asyncHandler(async (req, res) => {
   const result = await sensorModel.findAllSensors();
