@@ -3,11 +3,16 @@ const sensorModel = require("../models/sensor");
 const jwt = require("jsonwebtoken");
 
 exports.pairSensor = asyncHandler(async (req, res) => {
-  const { name, user_id, current_moisture_level } = req.body;
+  const { name, plant_id, user_id, current_moisture_level } = req.body;
 
+  // 1. Create sensor
   const result = await sensorModel.insertSensor(user_id, name, current_moisture_level);
   const sensor = result.rows[0];
 
+  // 2. Link sensor to plant
+  await sensorModel.attachSensorToPlant(plant_id, sensor.id);
+
+  // 3. Generate JWT
   const token = jwt.sign(
     { sensorId: sensor.id, user_id },
     process.env.JWT_SECRET,
@@ -23,11 +28,19 @@ exports.pairSensor = asyncHandler(async (req, res) => {
 
 exports.submitSensorData = asyncHandler(async (req, res) => {
   const { moisture } = req.body;
-  const { id } = req.sensor;
+  const { id } = req.sensor; // from JWT
 
-  const result = await sensorModel.insertSensorData(moisture, id);
+  // Update current level
+  const updateResult = await sensorModel.insertSensorData(moisture, id);
 
-  res.status(201).json({ success: true, data: result.rows[0] });
+  // Store in history
+  const historyResult = await sensorModel.insertSensorHistory(id, moisture);
+
+  res.status(201).json({
+    success: true,
+    current: updateResult.rows[0],
+    history: historyResult.rows[0],
+  });
 });
 
 exports.getAllSensors = asyncHandler(async (req, res) => {
