@@ -24,7 +24,6 @@ const updateGarden = asyncHandler(async (req, res) => {
   const user_id = req.user.id;
 
   const result = await updateGardenById(body, id, user_id);
-  console.log("Result in Controller: ", result);
 
   if (!result) {
     res.status(404);

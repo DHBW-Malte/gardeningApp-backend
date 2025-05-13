@@ -65,6 +65,7 @@ const updatePlant = asyncHandler(async (req, res) => {
   res.json(formatted);
 });
 
+//update batch of plants' watering date
 const batchUpdateWatered = asyncHandler(async (req, res) => {
   const { plantIds } = req.body;
   const updated = await batchUpdatePlants(plantIds);
@@ -77,6 +78,21 @@ const batchUpdateWatered = asyncHandler(async (req, res) => {
   return res.status(200).json(formatted)
 
 });
+
+//update single plant's watering date
+const singleUpdateWatered = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { date_watered } = req.body;
+  const updated = await singleWaterPlant(id, date_watered);
+
+  if (!updated) {
+    return res.status(404).json({error: "Plant not found for this update"});
+  }
+
+  const formatted = formatUserPlant(updated);
+  return res.status(200).json(formatted);
+})
+
 
 
 
@@ -92,4 +108,4 @@ const deletePlant = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = { getPlants, getPlantById, createPlant, updatePlant, batchUpdateWatered, deletePlant, searchPlants };
+module.exports = { getPlants, getPlantById, createPlant, updatePlant, batchUpdateWatered, deletePlant, searchPlants, singleUpdateWatered };
