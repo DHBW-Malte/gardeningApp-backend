@@ -55,7 +55,8 @@ const findPlantsByUser = (userId) => {
       catalog_plant.sun_light,
       catalog_plant.water_frequency,
       catalog_plant.feeding_frequency,
-      catalog_plant.fertilizer_type
+      catalog_plant.fertilizer_type,
+      catalog_plant.needed_moisture
     FROM user_plant
     JOIN catalog_plant ON user_plant.plant_id = catalog_plant.id
     WHERE user_plant.user_id = $1
@@ -98,7 +99,8 @@ const getFullUserPlantById = async (id, user_id = null) => {
       catalog_plant.sun_light,
       catalog_plant.water_frequency,
       catalog_plant.feeding_frequency,
-      catalog_plant.fertilizer_type
+      catalog_plant.fertilizer_type,
+      catalog_plant.needed_moisture
     FROM user_plant
     JOIN catalog_plant ON user_plant.plant_id = catalog_plant.id
     ${whereClause}

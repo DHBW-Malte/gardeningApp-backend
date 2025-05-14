@@ -17,14 +17,15 @@ function formatCatalogPlant(row = {}) {
 
     harvest: (row.harvest_start && row.harvest_end && row.yield != null && row.edible_parts)
       ? {
-          start: row.harvest_start,
-          end: row.harvest_end,
-          yield: row.yield,
-          edibleParts: row.edible_parts
-        }
+        start: row.harvest_start,
+        end: row.harvest_end,
+        yield: row.yield,
+        edibleParts: row.edible_parts
+      }
       : null,
 
     waterFrequency: row.water_frequency ?? "Moderate",
+    neededMoisture: row.needed_moisture,
     sunLight: row.sun_light ?? "Partial",
 
     temperature: {
@@ -72,15 +73,16 @@ function formatUserPlant(row = {}) {
     },
 
     waterFrequency: row.water_frequency ?? "Moderate",
+    neededMoisture: row.needed_moisture,
     sunLight: row.sun_light ?? "Partial",
 
     harvest: (row.harvest_start && row.harvest_end && row.yield != null && row.edible_parts)
       ? {
-          start: row.harvest_start,
-          end: row.harvest_end,
-          yield: row.yield,
-          edibleParts: row.edible_parts
-        }
+        start: row.harvest_start,
+        end: row.harvest_end,
+        yield: row.yield,
+        edibleParts: row.edible_parts
+      }
       : null,
 
     temperature: {
