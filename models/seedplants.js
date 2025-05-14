@@ -24,6 +24,7 @@ const plants = [
     fertilizerType: "Organic compost",
     plantingStart: "March",
     plantingEnd: "April",
+    neededMoisture: "Moist",
   },
   {
     commonName: "Rose",
@@ -44,6 +45,7 @@ const plants = [
     fertilizerType: "Rose fertilizer",
     plantingStart: "March",
     plantingEnd: "May",
+    neededMoisture: "Moist",
   },
   {
     commonName: "Carrot",
@@ -64,6 +66,7 @@ const plants = [
     fertilizerType: "All-purpose fertilizer",
     plantingStart: "March",
     plantingEnd: "June",
+    neededMoisture: "Very Dry",
   },
 ];
 
@@ -80,16 +83,16 @@ const plantExists = async (commonName) => {
 const addPlantsToPostgres = async () => {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN"); 
+    await client.query("BEGIN");
 
     for (const plant of plants) {
       console.log(`Processing plant: ${plant.commonName}`);
-      
+
       // Check if the plant already exists
       const exists = await plantExists(plant.commonName);
       if (exists) {
         console.log(`Plant "${plant.commonName}" already exists. Skipping...`);
-        continue; 
+        continue;
       }
 
       // Insert plant data into the catalog_plant table
@@ -97,9 +100,9 @@ const addPlantsToPostgres = async () => {
         INSERT INTO catalog_plant 
         (common_name, scientific_name, blooming_start, blooming_end, flower_color, water_frequency, 
         harvest_start, harvest_end, yield, edible_parts, sun_light, min_temperature, max_temperature, 
-        height, width, fertilizer_type, planting_start, planting_end)
+        height, width, fertilizer_type, planting_start, planting_end, needed_moisture)
         VALUES 
-        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
       `;
 
       const values = [
@@ -121,9 +124,10 @@ const addPlantsToPostgres = async () => {
         plant.fertilizerType,
         plant.plantingStart,
         plant.plantingEnd,
+        plant.neededMoisture
       ];
 
-      await client.query(query, values); 
+      await client.query(query, values);
       console.log(`Successfully added "${plant.commonName}"`);
     }
 
