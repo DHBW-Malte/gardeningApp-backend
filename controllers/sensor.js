@@ -5,11 +5,12 @@ const jwt = require("jsonwebtoken");
 exports.pairSensor = asyncHandler(async (req, res) => {
   const { name, plant_id, user_id, current_moisture_level } = req.body;
 
-  // Create sensor
+
+  //  Create sensor
   const result = await sensorModel.insertSensor(user_id, name, current_moisture_level);
   const sensor = result.rows[0];
 
-  //Link sensor to plant
+  //  Link sensor to plant
   await sensorModel.attachSensorToPlant(plant_id, sensor.id);
 
   // Generate JWT
@@ -22,7 +23,7 @@ exports.pairSensor = asyncHandler(async (req, res) => {
   accessToken,
   refreshToken,
   sensor,
-  });
+   
 });
 
 exports.submitSensorData = asyncHandler(async (req, res) => {

@@ -15,4 +15,6 @@ router.post("/data", verifySensorToken, sensor.submitSensorData);
 router.post("/sensor/refresh-token", sensor.refreshSensorToken);
 router.get("/sensor/:id/details", authenticateJWT, sensor.getSensorWithHistory);
 
+router.post("/sensor/refresh-token", sensor.refreshSensorToken);
+
 module.exports = router;
