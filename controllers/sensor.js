@@ -67,7 +67,19 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
 exports.getAllSensors = asyncHandler(async (req, res) => {
   const userId = req.user.id; // from JWT
   const result = await sensorModel.findAllSensors(userId);
-  res.json(result.rows);
+
+  const sensors = result.rows.map(sensor => {
+    const interpretedMoisture = interpretSoilMoisture(sensor.current_moisture_level);
+    const percentage = getMoisturePercentage(sensor.current_moisture_level);
+
+    return {
+      ...sensor,
+      interpretedMoisture,
+      percentage: percentage + "%"
+    };
+  });
+
+  res.json(sensors);
 });
 
 exports.getSensorById = asyncHandler(async (req, res) => {
