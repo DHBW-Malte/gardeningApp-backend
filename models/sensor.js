@@ -1,11 +1,32 @@
 const pool = require("../config/db");
 
-exports.findAllSensors = () => {
-  return pool.query("SELECT * FROM moisture_Sensor ORDER BY date_added DESC");
+exports.findAllSensors = (userId) => {
+  return pool.query(
+    `SELECT s.*, up.id AS plant_id, up.nickname 
+     FROM moisture_sensor s
+     LEFT JOIN user_plant up ON s.id = up.moisture_sensor_id
+     WHERE s.user_id = $1`,
+    [userId]
+  );
 };
 
-exports.findSensorById = (id) => {
-  return pool.query("SELECT * FROM moisture_Sensor WHERE id = $1", [id]);
+exports.findSensorByIdWithPlant = (sensorId, userId) => {
+  return pool.query(
+    `SELECT s.*, up.id AS plant_id, up.nickname
+     FROM moisture_sensor s
+     LEFT JOIN user_plant up ON s.id = up.moisture_sensor_id
+     WHERE s.id = $1 AND s.user_id = $2`,
+    [sensorId, userId]
+  );
+};
+
+exports.getSensorHistory = (sensorId, days = 28) => {
+  return pool.query(
+    `SELECT * FROM moisture_level_history 
+     WHERE sensor_id = $1 AND time_stamp >= NOW() - INTERVAL '${days} days'
+     ORDER BY time_stamp ASC`,
+    [sensorId]
+  );
 };
 
 exports.insertSensor = (user_id, name, moisture) => {
