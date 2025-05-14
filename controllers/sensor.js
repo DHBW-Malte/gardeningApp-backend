@@ -2,6 +2,14 @@ const asyncHandler = require("express-async-handler");
 const sensorModel = require("../models/sensor");
 const jwt = require("jsonwebtoken");
 
+function interpretSoilMoisture(rawValue) {
+  if (rawValue > 800) return "Very Dry";
+  else if (rawValue > 600) return "Dry";
+  else if (rawValue > 400) return "Moist";
+  else if (rawValue > 200) return "Wet";
+  else return "Very Wet";
+}
+
 exports.pairSensor = asyncHandler(async (req, res) => {
   const { name, plant_id, user_id, current_moisture_level } = req.body;
 
@@ -25,7 +33,7 @@ exports.pairSensor = asyncHandler(async (req, res) => {
   sensor,
    
 });
-
+});
 exports.submitSensorData = asyncHandler(async (req, res) => {
   const { moisture } = req.body;
   const { id } = req.sensor; // from JWT
@@ -36,10 +44,16 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
   // Store in history
   const historyResult = await sensorModel.insertSensorHistory(id, moisture);
 
+  // Interpret value
+  const label = interpretSoilMoisture(moisture);
+
   res.status(201).json({
     success: true,
-    current: updateResult.rows[0],
-    history: historyResult.rows[0],
+    current: {
+      ...updateResult.rows[0],
+      interpretation: label
+    },
+    history: historyResult.rows[0]
   });
 });
 
@@ -56,7 +70,13 @@ exports.getSensorById = asyncHandler(async (req, res) => {
   if (result.rows.length === 0) {
     return res.status(404).json({ error: "Sensor not found or not authorized" });
   }
-  res.json(result.rows[0]);
+  const sensor = result.rows[0];
+  const interpretedMoisture = interpretSoilMoisture(sensor.current_moisture_level);
+
+  res.json({
+    ...sensor,
+    interpretedMoisture
+  });
 });
 
 exports.getSensorWithHistory = asyncHandler(async (req, res) => {
@@ -67,7 +87,10 @@ exports.getSensorWithHistory = asyncHandler(async (req, res) => {
   const historyResult = await sensorModel.getSensorHistory(id, 28); // last 4 weeks
   res.json({
     sensor: sensorResult.rows[0],
-    history: historyResult.rows
+    history: historyResult.rows.map(entry => ({
+      ...entry,
+      interpreted: interpretSoilMoisture(entry.moisture_level)
+    }))
   });
 });
 
