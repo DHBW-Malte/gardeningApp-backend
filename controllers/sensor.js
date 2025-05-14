@@ -10,6 +10,11 @@ function interpretSoilMoisture(rawValue) {
   else return "Very Wet";
 }
 
+function getMoisturePercentage(rawValue) {
+  const percentage = Math.max(0, Math.min(100, Math.round(((1023 - rawValue) / 1023) * 100)));
+  return percentage;
+}
+
 exports.pairSensor = asyncHandler(async (req, res) => {
   const { name, plant_id, user_id, current_moisture_level } = req.body;
 
@@ -46,12 +51,14 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
 
   // Interpret value
   const label = interpretSoilMoisture(moisture);
-
+  const percentage = getMoisturePercentage(moisture);
+  
   res.status(201).json({
     success: true,
     current: {
       ...updateResult.rows[0],
-      interpretation: label
+      interpretation: label,
+      percentage: percentage + "%"
     },
     history: historyResult.rows[0]
   });
@@ -60,7 +67,19 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
 exports.getAllSensors = asyncHandler(async (req, res) => {
   const userId = req.user.id; // from JWT
   const result = await sensorModel.findAllSensors(userId);
-  res.json(result.rows);
+
+  const sensors = result.rows.map(sensor => {
+    const interpretedMoisture = interpretSoilMoisture(sensor.current_moisture_level);
+    const percentage = getMoisturePercentage(sensor.current_moisture_level);
+
+    return {
+      ...sensor,
+      interpretedMoisture,
+      percentage: percentage + "%"
+    };
+  });
+
+  res.json(sensors);
 });
 
 exports.getSensorById = asyncHandler(async (req, res) => {
@@ -72,10 +91,12 @@ exports.getSensorById = asyncHandler(async (req, res) => {
   }
   const sensor = result.rows[0];
   const interpretedMoisture = interpretSoilMoisture(sensor.current_moisture_level);
-
+  const percentage = getMoisturePercentage(sensor.current_moisture_level);
+  
   res.json({
     ...sensor,
-    interpretedMoisture
+    interpretedMoisture,
+    percentage: percentage + "%"
   });
 });
 
