@@ -2,8 +2,17 @@ const asyncHandler = require("express-async-handler");
 const sensorModel = require("../models/sensor");
 const jwt = require("jsonwebtoken");
 
+function interpretSoilMoisture(rawValue) {
+  if (rawValue > 800) return "Very Dry";
+  else if (rawValue > 600) return "Dry";
+  else if (rawValue > 400) return "Moist";
+  else if (rawValue > 200) return "Wet";
+  else return "Very Wet";
+}
+
 exports.pairSensor = asyncHandler(async (req, res) => {
   const { name, plant_id, user_id, current_moisture_level } = req.body;
+
 
   //  Create sensor
   const result = await sensorModel.insertSensor(user_id, name, current_moisture_level);
@@ -22,9 +31,9 @@ exports.pairSensor = asyncHandler(async (req, res) => {
   accessToken,
   refreshToken,
   sensor,
+   
 });
 });
-
 exports.submitSensorData = asyncHandler(async (req, res) => {
   const { moisture } = req.body;
   const { id } = req.sensor; // from JWT
@@ -35,23 +44,54 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
   // Store in history
   const historyResult = await sensorModel.insertSensorHistory(id, moisture);
 
+  // Interpret value
+  const label = interpretSoilMoisture(moisture);
+
   res.status(201).json({
     success: true,
-    current: updateResult.rows[0],
-    history: historyResult.rows[0],
+    current: {
+      ...updateResult.rows[0],
+      interpretation: label
+    },
+    history: historyResult.rows[0]
   });
 });
 
 exports.getAllSensors = asyncHandler(async (req, res) => {
-  const result = await sensorModel.findAllSensors();
+  const userId = req.user.id; // from JWT
+  const result = await sensorModel.findAllSensors(userId);
   res.json(result.rows);
 });
 
 exports.getSensorById = asyncHandler(async (req, res) => {
+  const sensorId = req.params.id;
+  const userId = req.user.id;
+  const result = await sensorModel.findSensorByIdWithPlant(sensorId, userId);
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: "Sensor not found or not authorized" });
+  }
+  const sensor = result.rows[0];
+  const interpretedMoisture = interpretSoilMoisture(sensor.current_moisture_level);
+
+  res.json({
+    ...sensor,
+    interpretedMoisture
+  });
+});
+
+exports.getSensorWithHistory = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const result = await sensorModel.findSensorById(id);
-  if (result.rows.length === 0) return res.status(404).json({ error: "Sensor not found" });
-  res.json(result.rows[0]);
+  const userId = req.user.id;
+  const sensorResult = await sensorModel.findSensorByIdWithPlant(id, userId);
+  if (sensorResult.rows.length === 0) return res.status(404).json({ error: "Sensor not found" });
+  const historyResult = await sensorModel.getSensorHistory(id, 28); // last 4 weeks
+  res.json({
+    sensor: sensorResult.rows[0],
+    history: historyResult.rows.map(entry => ({
+      ...entry,
+      interpreted: interpretSoilMoisture(entry.moisture_level)
+    }))
+  });
 });
 
 exports.createSensor = asyncHandler(async (req, res) => {
