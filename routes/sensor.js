@@ -11,4 +11,6 @@ router.put("/sensor/:id", sensor.updateSensor);
 router.delete("/sensor/:id", sensor.deleteSensor);
 router.post("/data", verifySensorToken, sensor.submitSensorData);
 
+router.post("/sensor/refresh-token", sensor.refreshSensorToken);
+
 module.exports = router;
