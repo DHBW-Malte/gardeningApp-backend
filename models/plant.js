@@ -149,9 +149,7 @@ const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
 };
 
 const batchUpdatePlants = async (plantIds) => {
-  console.log(plantIds);
   const dateWatered = new Date().toISOString().split('T')[0];
-  console.log(dateWatered);
   const query = `
     UPDATE user_plant
     SET date_watered = $1
@@ -162,9 +160,21 @@ const batchUpdatePlants = async (plantIds) => {
   const values = [dateWatered, plantIds];
 
   const result = await pool.query(query, values);
-  console.log(result.rows)
   return result.rows;
 };
+
+const singleWaterPlant = async (plantId, dateWatered) => {
+  const query = `
+    UPDATE user_plant
+    SET date_watered = $1
+    WHERE id = $2
+    RETURNING *;
+  `
+  const values = [dateWatered, plantId];
+
+  const result = await pool.query(query, values);
+  return result.rows;
+}
 
 
 const deleteUserPlant = (id, user_id) => {
@@ -182,5 +192,6 @@ module.exports = {
   createUserPlant,
   updateUserPlant,
   batchUpdatePlants,
+  singleWaterPlant,
   deleteUserPlant,
 };
