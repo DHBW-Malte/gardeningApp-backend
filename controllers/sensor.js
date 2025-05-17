@@ -123,17 +123,30 @@ exports.createSensor = asyncHandler(async (req, res) => {
 
 exports.updateSensor = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, current_moisture_level } = req.body;
+  const { name, current_moisture_level, plant_id } = req.body;
+
   const result = await sensorModel.updateSensor(id, name, current_moisture_level);
+
+  if (plant_id) {
+    await sensorModel.attachSensorToPlant(plant_id, id); 
+  }
+
   if (result.rows.length === 0) return res.status(404).json({ error: "Sensor not found" });
+
   res.json(result.rows[0]);
 });
 
 exports.deleteSensor = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  await sensorModel.detachSensorFromPlant(id);
+  await sensorModel.deleteSensorHistory(id);
   const result = await sensorModel.deleteSensor(id);
-  if (result.rows.length === 0) return res.status(404).json({ error: "Sensor not found" });
-  res.json({ message: "Sensor deleted" });
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: "Sensor not found" });
+  }
+
+  res.json({ message: "Sensor deleted successfully" });
 });
 
 exports.refreshSensorToken = asyncHandler(async (req, res) => {

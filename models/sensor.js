@@ -43,6 +43,20 @@ exports.updateSensor = (id, name, moisture) => {
   );
 };
 
+exports.detachSensorFromPlant = (sensorId) => {
+  return pool.query(
+    "UPDATE user_plant SET moisture_sensor_id = NULL WHERE moisture_sensor_id = $1",
+    [sensorId]
+  );
+};
+
+exports.deleteSensorHistory = (sensorId) => {
+  return pool.query(
+    "DELETE FROM moisture_level_history WHERE sensor_id = $1",
+    [sensorId]
+  );
+};
+
 exports.deleteSensor = (id) => {
   return pool.query("DELETE FROM moisture_Sensor WHERE id = $1 RETURNING *", [id]);
 };
