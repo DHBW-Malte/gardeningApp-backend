@@ -172,3 +172,4 @@ exports.refreshSensorToken = asyncHandler(async (req, res) => {
 });
 
 exports.interpretSoilMoisture = interpretSoilMoisture;
+exports.getMoisturePercentage = getMoisturePercentage;
