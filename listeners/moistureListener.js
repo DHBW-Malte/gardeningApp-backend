@@ -1,6 +1,7 @@
 const { Client } = require("pg");
 const { notifyClients } = require("../sockets/socketHandler");
 const { interpretSoilMoisture } = require("../controllers/sensor");
+const { getMoisturePercentage } = require("../controllers/sensor");
 require("dotenv").config();
 
 const pgClient = new Client({
@@ -24,12 +25,14 @@ pgClient.on("notification", (msg) => {
         const payload = JSON.parse(msg.payload || "{}");
 
         const interpretedLevel = interpretSoilMoisture(payload.moisture_level);
+        const percentage = getMoisturePercentage(payload.moisture_level);
 
         notifyClients(payload.user_id, {
             type: "MOISTURE_UPDATE",
             sensorId: payload.sensorId,
             moisture_level: payload.moisture_level,
             interpreted_level: interpretedLevel,
+            percentage: percentage,
         });
     }
 });
