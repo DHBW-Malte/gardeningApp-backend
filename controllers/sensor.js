@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const sensorModel = require("../models/sensor");
 const jwt = require("jsonwebtoken");
 
-export function interpretSoilMoisture(rawValue) {
+function interpretSoilMoisture(rawValue) {
   if (rawValue > 800) return "Very Dry";
   else if (rawValue > 600) return "Dry";
   else if (rawValue > 400) return "Moist";
@@ -170,3 +170,5 @@ exports.refreshSensorToken = asyncHandler(async (req, res) => {
     return res.status(403).json({ error: "Invalid or expired refresh token" });
   }
 });
+
+exports.interpretSoilMoisture = interpretSoilMoisture;
