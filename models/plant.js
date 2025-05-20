@@ -143,6 +143,7 @@ const updateUserPlant = async (fieldsToUpdate, id, user_id) => {
     WHERE id = $${index} AND user_id = $${index + 1}
     RETURNING *;
   `;
+  console.log("query: ", query);
 
   const result = await pool.query(query, values);
   return result.rows[0];
