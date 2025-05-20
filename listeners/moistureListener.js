@@ -15,7 +15,7 @@ pgClient.connect()
     .then(() => {
         console.log("Connected to PostgreSQL LISTEN client.");
         pgClient.query("LISTEN moisture_channel");
-        pgClient.query("LISTEN new_sensor_channel"); // ✅ neuer Channel
+        pgClient.query("LISTEN new_sensor_channel");
     })
     .catch(err => console.error("Error connecting to PostgreSQL:", err.message));
 
@@ -38,7 +38,6 @@ pgClient.on("notification", (msg) => {
     if (msg.channel === "new_sensor_channel") {
         const interpretedLevel = interpretSoilMoisture(payload.moisture_level);
         const percentage = getMoisturePercentage(payload.moisture_level);
-        console.log("New sensor: ", payload)
         notifyClients(payload.user_id, {
             type: "NEW_SENSOR",
             sensorId: payload.sensorId,
