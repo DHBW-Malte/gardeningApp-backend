@@ -51,6 +51,7 @@ pgClient.on("notification", (msg) => {
                 percentage: `${percentage} %`,
                 user_plant_id: payload.user_plant_id,
                 plant_nickname: payload.plant_nickname,
+                sensorName: payload.sensor_name,
             });
         }, 2000);
     }
