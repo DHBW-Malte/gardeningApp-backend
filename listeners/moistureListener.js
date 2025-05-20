@@ -32,7 +32,7 @@ pgClient.on("notification", (msg) => {
             sensorId: payload.sensorId,
             moisture_level: payload.moisture_level,
             interpreted_level: interpretedLevel,
-            percentage: percentage,
+            percentage: `${percentage} %`,
         });
     }
 });
