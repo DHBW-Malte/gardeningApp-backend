@@ -19,7 +19,7 @@ function initSocketIO(io) {
 
 function notifyClients(userId, message) {
     if (!ioInstance) return;
-    ioInstance.to(`user:${userId}`).emit("MOISTURE_UPDATE", message);
+    ioInstance.to(`user:${userId}`).emit(message.type, message);
 }
 
 module.exports = {
