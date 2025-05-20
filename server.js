@@ -6,6 +6,20 @@ const pool = require("./config/db");
 const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT;
+const { initSocketIO } = require("./sockets/socketHandler");
+require("./listeners/moistureListener");
+
+
+const http = require("http");
+const { Server } = require("socket.io");
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 // routes
 const authRoutes = require("./routes/auth");
@@ -35,7 +49,7 @@ app.use(errorHandler);
 
 
 // Start server
-app.listen(port, '0.0.0.0', async () => {
+server.listen(port, "0.0.0.0", async () => {
   console.log(`Server running on port ${port}`);
 
   try {
@@ -46,4 +60,6 @@ app.listen(port, '0.0.0.0', async () => {
   } catch (err) {
     console.error('Failed to connect to the database:', err.message);
   }
+
+  initSocketIO(io);
 });
