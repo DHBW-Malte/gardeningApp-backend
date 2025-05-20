@@ -39,7 +39,7 @@ pgClient.on("notification", (msg) => {
     if (msg.channel === "new_sensor_channel") {
         const interpretedLevel = interpretSoilMoisture(payload.moisture_level);
         const percentage = getMoisturePercentage(payload.moisture_level);
-
+        console.log(payload)
         setPendingSensor(payload.user_id, {
             type: "NEW_SENSOR",
             sensorId: payload.sensorId,
@@ -48,6 +48,7 @@ pgClient.on("notification", (msg) => {
             percentage: `${percentage} %`,
             user_plant_id: payload.user_plant_id,
             plant_nickname: payload.plant_nickname,
+            sensorName: payload.sensor_name,
         })
     }
 
