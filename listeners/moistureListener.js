@@ -35,18 +35,24 @@ pgClient.on("notification", (msg) => {
         });
     }
 
+
     if (msg.channel === "new_sensor_channel") {
         const interpretedLevel = interpretSoilMoisture(payload.moisture_level);
         const percentage = getMoisturePercentage(payload.moisture_level);
+
         console.log("[PG Notify] NEW_SENSOR Payload:", payload);
-        notifyClients(payload.user_id, {
-            type: "NEW_SENSOR",
-            sensorId: payload.sensorId,
-            moisture_level: payload.moisture_level,
-            interpreted_level: interpretedLevel,
-            percentage: `${percentage} %`,
-            user_plant_id: payload.user_plant_id,
-            plant_nickname: payload.plant_nickname,
-        });
+
+        setTimeout(() => {
+            notifyClients(payload.user_id, {
+                type: "NEW_SENSOR",
+                sensorId: payload.sensorId,
+                moisture_level: payload.moisture_level,
+                interpreted_level: interpretedLevel,
+                percentage: `${percentage} %`,
+                user_plant_id: payload.user_plant_id,
+                plant_nickname: payload.plant_nickname,
+            });
+        }, 2000);
     }
+
 });
