@@ -17,16 +17,25 @@ pgClient.connect()
     })
     .catch(err => console.error("Error connecting to PostgreSQL:", err.message));
 
+
 pgClient.on("notification", (msg) => {
     if (msg.channel === "moisture_channel") {
         const payload = JSON.parse(msg.payload || "{}");
-        console.log("[DB Trigger] New moisture value:", payload);
+
+        const interpretedLevel = interpretMoisture(payload.moisture_level);
 
         notifyClients(payload.user_id, {
             type: "MOISTURE_UPDATE",
             sensorId: payload.sensorId,
             moisture_level: payload.moisture_level,
-            interpreted_level: payload.interpreted_moisture_level,
+            interpreted_level: interpretedLevel,
         });
     }
 });
+
+function interpretMoisture(value) {
+    if (value < 300) return "Dry";
+    if (value < 700) return "Moist";
+    return "Wet";
+}
+
