@@ -30,14 +30,14 @@ exports.pairSensor = asyncHandler(async (req, res) => {
   const accessToken = jwt.sign({ sensorId: sensor.id, user_id }, process.env.JWT_SECRET, { expiresIn: "7d" });
   const refreshToken = jwt.sign({ sensorId: sensor.id, user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "14d" });
 
- // send both to sensor
- res.status(201).json({
-  message: "Sensor paired successfully",
-  accessToken,
-  refreshToken,
-  sensor,
-   
-});
+  // send both to sensor
+  res.status(201).json({
+    message: "Sensor paired successfully",
+    accessToken,
+    refreshToken,
+    sensor,
+
+  });
 });
 exports.submitSensorData = asyncHandler(async (req, res) => {
   const { moisture } = req.body;
@@ -52,7 +52,7 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
   // Interpret value
   const label = interpretSoilMoisture(moisture);
   const percentage = getMoisturePercentage(moisture);
-  
+
   res.status(201).json({
     success: true,
     current: {
@@ -92,7 +92,7 @@ exports.getSensorById = asyncHandler(async (req, res) => {
   const sensor = result.rows[0];
   const interpretedMoisture = interpretSoilMoisture(sensor.current_moisture_level);
   const percentage = getMoisturePercentage(sensor.current_moisture_level);
-  
+
   res.json({
     ...sensor,
     interpretedMoisture,
@@ -128,7 +128,7 @@ exports.updateSensor = asyncHandler(async (req, res) => {
   const result = await sensorModel.updateSensor(id, name, current_moisture_level);
 
   if (plant_id) {
-    await sensorModel.attachSensorToPlant(plant_id, id); 
+    await sensorModel.attachSensorToPlant(plant_id, id);
   }
 
   if (result.rows.length === 0) return res.status(404).json({ error: "Sensor not found" });
@@ -170,3 +170,6 @@ exports.refreshSensorToken = asyncHandler(async (req, res) => {
     return res.status(403).json({ error: "Invalid or expired refresh token" });
   }
 });
+
+exports.interpretSoilMoisture = interpretSoilMoisture;
+exports.getMoisturePercentage = getMoisturePercentage;
