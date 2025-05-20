@@ -1,7 +1,6 @@
 const { Client } = require("pg");
 const { notifyClients } = require("../sockets/socketHandler");
-const { interpretSoilMoisture } = require("../controllers/sensor");
-const { getMoisturePercentage } = require("../controllers/sensor");
+const { interpretSoilMoisture, getMoisturePercentage } = require("../controllers/sensor");
 require("dotenv").config();
 
 const pgClient = new Client({
@@ -16,14 +15,14 @@ pgClient.connect()
     .then(() => {
         console.log("Connected to PostgreSQL LISTEN client.");
         pgClient.query("LISTEN moisture_channel");
+        pgClient.query("LISTEN new_sensor_channel"); // ✅ neuer Channel
     })
     .catch(err => console.error("Error connecting to PostgreSQL:", err.message));
 
-
 pgClient.on("notification", (msg) => {
-    if (msg.channel === "moisture_channel") {
-        const payload = JSON.parse(msg.payload || "{}");
+    const payload = JSON.parse(msg.payload || "{}");
 
+    if (msg.channel === "moisture_channel") {
         const interpretedLevel = interpretSoilMoisture(payload.moisture_level);
         const percentage = getMoisturePercentage(payload.moisture_level);
 
@@ -33,6 +32,21 @@ pgClient.on("notification", (msg) => {
             moisture_level: payload.moisture_level,
             interpreted_level: interpretedLevel,
             percentage: `${percentage} %`,
+        });
+    }
+
+    if (msg.channel === "new_sensor_channel") {
+        const interpretedLevel = interpretSoilMoisture(payload.moisture_level);
+        const percentage = getMoisturePercentage(payload.moisture_level);
+
+        notifyClients(payload.user_id, {
+            type: "NEW_SENSOR",
+            sensorId: payload.sensorId,
+            moisture_level: payload.moisture_level,
+            interpreted_level: interpretedLevel,
+            percentage: `${percentage} %`,
+            user_plant_id: payload.user_plant_id,
+            plant_nickname: payload.plant_nickname,
         });
     }
 });
