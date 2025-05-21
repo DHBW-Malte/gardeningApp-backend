@@ -48,6 +48,7 @@ function formatCatalogPlant(row = {}) {
 }
 
 function formatUserPlant(row = {}) {
+  console.log(row)
   return {
     id: row.user_plant_id ?? null,
     nickName: row.nickname ?? "Unnamed Plant",
