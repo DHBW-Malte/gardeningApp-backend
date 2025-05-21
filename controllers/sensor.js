@@ -49,18 +49,7 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
   const parsedMoisture = Number(moisture);
 
   // Validate
-  if (
-    typeof parsedMoisture !== "number" ||
-    isNaN(parsedMoisture) ||
-    !isFinite(parsedMoisture) ||
-    parsedMoisture < 0 ||
-    parsedMoisture > 1023
-  ) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid moisture value. Must be a number between 0 and 1023.",
-    });
-  }
+
 
   // Update current level
   const updateResult = await sensorModel.insertSensorData(parsedMoisture, sensorId);
