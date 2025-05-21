@@ -61,7 +61,7 @@ function formatUserPlant(row = {}) {
     moistureLevel: row.moisture_level ?? "Unknown",
     sunlightLevel: row.sunlight_level ?? "Unknown",
     harvested: row.harvest_status ?? false,
-    sensorId: row.user_plant.moisture_sensor_id ?? null,
+    sensorId: row.moisture_sensor_id ?? null,
 
     name: {
       commonName: row.common_name ?? "Unknown",
