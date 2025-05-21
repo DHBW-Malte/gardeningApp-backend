@@ -20,6 +20,7 @@ const mockResponse = () => {
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
+
 // Mock model auth
 jest.mock("../models/auth", () => ({
   findUserByEmail: jest.fn(),
@@ -71,7 +72,11 @@ describe("Auth Controller", () => {
       expect(res.json).toHaveBeenCalledWith({
         accessToken: "mock-access-token",
         refreshToken: "mock-refresh-token",
-        user,
+        user: {
+          id: 1,
+          email: "test@example.com",
+          username: "testuser",
+        },
       });
     });
 
@@ -147,7 +152,11 @@ describe("Auth Controller", () => {
       expect(res.json).toHaveBeenCalledWith({
         accessToken: "mock-access-token",
         refreshToken: "mock-refresh-token",
-        user: newUser,
+        user: {
+          id: 1,
+          email: "newuser@example.com",
+          username: "newuser",
+        },
       });
     });
 
