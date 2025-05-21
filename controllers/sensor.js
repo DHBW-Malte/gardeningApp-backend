@@ -39,34 +39,50 @@ exports.pairSensor = asyncHandler(async (req, res) => {
 
   });
 });
-exports.submitSensorData = asyncHandler(async (req, res) => {
-  console.log("----User ID: ",req.sensor);
-  console.log("----Request: ", req.body);
-  const { moisture } = req.body;
-  const { sensorId } = req.sensor; // from JWT
-  console.log("----Sensor ID: ",sensorId);
 
+
+exports.submitSensorData = asyncHandler(async (req, res) => {
+  const { moisture } = req.body;
+  const { sensorId } = req.sensor;
+
+  // Try to convert to number
+  const parsedMoisture = Number(moisture);
+
+  // Validate
+  if (
+    typeof parsedMoisture !== "number" ||
+    isNaN(parsedMoisture) ||
+    !isFinite(parsedMoisture) ||
+    parsedMoisture < 0 ||
+    parsedMoisture > 1023
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid moisture value. Must be a number between 0 and 1023.",
+    });
+  }
 
   // Update current level
-  const updateResult = await sensorModel.insertSensorData(moisture, sensorId);
+  const updateResult = await sensorModel.insertSensorData(parsedMoisture, sensorId);
 
   // Store in history
-  const historyResult = await sensorModel.insertSensorHistory(sensorId, moisture);
+  const historyResult = await sensorModel.insertSensorHistory(sensorId, parsedMoisture);
 
   // Interpret value
-  const label = interpretSoilMoisture(moisture);
-  const percentage = getMoisturePercentage(moisture);
+  const label = interpretSoilMoisture(parsedMoisture);
+  const percentage = getMoisturePercentage(parsedMoisture);
 
   res.status(201).json({
     success: true,
     current: {
       ...updateResult.rows[0],
       interpretation: label,
-      percentage: percentage + "%"
+      percentage: percentage + "%",
     },
-    history: historyResult.rows[0]
+    history: historyResult.rows[0],
   });
 });
+
 
 exports.getAllSensors = asyncHandler(async (req, res) => {
   const userId = req.user.id; // from JWT
