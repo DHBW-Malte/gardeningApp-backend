@@ -44,14 +44,14 @@ exports.submitSensorData = asyncHandler(async (req, res) => {
   console.log("----Request: ", req.body);
   const { moisture } = req.body;
   const { sensorId } = req.sensor; // from JWT
-  console.log("----Sensor ID: ",id);
+  console.log("----Sensor ID: ",sensorId);
 
 
   // Update current level
-  const updateResult = await sensorModel.insertSensorData(moisture, id);
+  const updateResult = await sensorModel.insertSensorData(moisture, sensorId);
 
   // Store in history
-  const historyResult = await sensorModel.insertSensorHistory(id, moisture);
+  const historyResult = await sensorModel.insertSensorHistory(sensorId, moisture);
 
   // Interpret value
   const label = interpretSoilMoisture(moisture);
