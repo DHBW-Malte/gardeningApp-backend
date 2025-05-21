@@ -62,6 +62,7 @@ exports.deleteSensor = (id) => {
 };
 
 exports.insertSensorData = (moisture, id) => {
+  console.log("Updating sensor: ", id, moisture);
   return pool.query(
     "UPDATE moisture_sensor SET current_moisture_level = $1 WHERE id = $2 RETURNING *",
     [moisture, id]
@@ -69,6 +70,7 @@ exports.insertSensorData = (moisture, id) => {
 };
 
 exports.insertSensorHistory = (sensorId, moistureLevel) => {
+  console.log("Updating sensor history: ", sensorId, moistureLevel);
   return pool.query(
     "INSERT INTO moisture_level_history (sensor_id, moisture_level, time_stamp) VALUES ($1, $2, CURRENT_TIMESTAMP) RETURNING *",
     [sensorId, moistureLevel]
