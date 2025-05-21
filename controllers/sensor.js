@@ -42,6 +42,8 @@ exports.pairSensor = asyncHandler(async (req, res) => {
 exports.submitSensorData = asyncHandler(async (req, res) => {
   const { moisture } = req.body;
   const { id } = req.sensor; // from JWT
+  console.log("Sensor ID: ",id);
+  console.log("Request :", req);
 
   // Update current level
   const updateResult = await sensorModel.insertSensorData(moisture, id);
