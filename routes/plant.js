@@ -7,7 +7,8 @@ const {
   updatePlant, 
   deletePlant,
   searchPlants,
-  batchUpdateWatered
+  batchUpdateWatered,
+  singleUpdateWatered,
 } = require("../controllers/plant");
 
 // Get all plants
@@ -19,7 +20,9 @@ router.post("/plants", createPlant);
 // Search plants by common name
 router.get("/plants/search", searchPlants);
 
+// Water a batch of plants
 router.put("/plants/batch", batchUpdateWatered);
+
 
 // Get a plant by ID
 router.get("/plants/:id", getPlantById);
@@ -29,6 +32,9 @@ router.put("/plants/:id", updatePlant);
 
 // Delete a plant
 router.delete("/plants/:id", deletePlant);
+
+//Water a single plant
+router.put("/plants/water/:id", singleUpdateWatered);
 
 module.exports = router;
 
